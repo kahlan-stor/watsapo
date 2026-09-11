@@ -1,118 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#06101d">
-<title>Watsapo — WhatsApp Bot</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#102b45 0,#06101d 48%,#030913 100%);color:#eef6ff;font-family:Arial,Tahoma,sans-serif}
-main{width:min(760px,100%);margin:auto;padding:28px 16px 40px}
-.card{background:rgba(12,26,43,.92);border:1px solid #1c3550;border-radius:26px;padding:24px;margin-bottom:16px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
-.hero{text-align:center}
-.logo{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;display:grid;place-items:center;background:#1677ff;font-size:36px;box-shadow:0 12px 30px rgba(22,119,255,.3)}
-h1{margin:0 0 8px;font-size:28px}.muted{color:#9db0c4}
-.status{display:flex;justify-content:center;gap:10px;align-items:center;margin:20px 0;font-size:19px}
-.dot{width:13px;height:13px;border-radius:50%;background:#8795a7;box-shadow:0 0 0 5px rgba(135,149,167,.1)}
-.ok{background:#22d477;box-shadow:0 0 0 5px rgba(34,212,119,.12)}
-.qr{display:none;background:#fff;border-radius:20px;padding:14px;justify-content:center;align-items:center;margin:22px auto;max-width:460px}
-.qr img{display:block;width:min(420px,100%);height:auto}
-.hint{line-height:1.8}
-button{border:0;border-radius:12px;padding:13px 20px;background:#1677ff;color:#fff;font-size:16px;cursor:pointer}
-button:active{transform:scale(.98)}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.item{background:#07111e;border:1px solid #19314a;border-radius:14px;padding:14px}
-.label{font-size:12px;color:#8195aa;margin-bottom:6px}
-.value{font-weight:700}
-code{background:#07111e;padding:4px 7px;border-radius:6px}
-.error{color:#ff8d8d;word-break:break-word}
-@media(max-width:520px){main{padding:16px 12px 30px}.card{padding:19px;border-radius:21px}h1{font-size:24px}.grid{grid-template-columns:1fr}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم واتساب الأعمال</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Tahoma,sans-serif}
+    body{display:flex;min-height:100vh;background:#111b21;color:#e9edef}
+    #sidebar{width:280px;background:#202c33;border-left:1px solid #2a3942;padding:20px;display:flex;flex-direction:column}
+    #sidebar h2{text-align:center;color:#00a884;margin-bottom:20px;font-size:1.2rem}
+    .nav-btn{background:#2a3942;color:#e9edef;border:0;padding:12px;margin-bottom:10px;border-radius:8px;cursor:pointer;text-align:right}
+    .nav-btn:hover,.nav-btn.active{background:#00a884;color:#111b21;font-weight:bold}
+    #main-content{flex:1;padding:30px;display:flex;flex-direction:column;gap:20px}
+    .card{background:#202c33;padding:20px;border-radius:10px;border:1px solid #2a3942}
+    .status-badge{display:inline-block;padding:5px 12px;border-radius:15px;background:#00a884;color:#111b21;font-weight:bold}
+    .toggle-container{display:flex;justify-content:space-between;align-items:center;gap:20px}
+    .action-btn{background:#00a884;border:0;padding:10px 20px;color:#111b21;border-radius:5px;font-weight:bold;cursor:pointer}
+    #log-box{background:#0b141a;padding:15px;border-radius:8px;height:220px;overflow-y:auto;font-family:monospace;font-size:.85rem;color:#25d366}
+    .muted{color:#8696a0;font-size:.85rem;margin-top:8px}
+    @media(max-width:700px){
+      body{display:block}
+      #sidebar{width:100%;border-left:0;border-bottom:1px solid #2a3942}
+      #main-content{padding:15px}
+      .toggle-container{flex-direction:column;align-items:stretch}
+    }
+  </style>
 </head>
 <body>
-<main>
-<section class="card hero">
-  <div class="logo">📱</div>
-  <h1>Watsapo</h1>
-  <div class="muted">لوحة تحكم WhatsApp Bot</div>
+  <aside id="sidebar">
+    <h2>واتساب الأعمال الذكي</h2>
+    <button class="nav-btn active" onclick="switchTab(this,'overview')">📌 النظرة العامة</button>
+    <button class="nav-btn" onclick="switchTab(this,'chats')">💬 الدردشات</button>
+    <button class="nav-btn" onclick="switchTab(this,'calls')">📞 سجل المكالمات</button>
+    <button class="nav-btn" onclick="switchTab(this,'statuses')">👁️ الحالات</button>
+    <button class="nav-btn" onclick="switchTab(this,'settings')">⚙️ إعدادات الذكاء الاصطناعي</button>
+  </aside>
 
-  <div class="status">
-    <span id="dot" class="dot"></span>
-    <strong id="state">جاري التشغيل...</strong>
-  </div>
+  <main id="main-content">
+    <section class="card">
+      <h3>حالة الاتصال</h3>
+      <p style="margin-top:10px">الحالة الحالية:
+        <span id="bot-status" class="status-badge">جاري التحميل...</span>
+      </p>
+      <p class="muted">يتم تشغيل WhatsApp Web داخل جلسة محفوظة محلياً. امسح رمز QR عند ظهوره في بيئة تشغيل تدعم عرض المتصفح.</p>
+    </section>
 
-  <div id="qrBox" class="qr"><img id="qr" alt="WhatsApp QR Code"></div>
+    <section class="card toggle-container">
+      <div>
+        <h3>الرد الآلي الذكي (Gemini AI)</h3>
+        <p class="muted">تحكم في تشغيل/إيقاف الرد الآلي من لوحة التحكم.</p>
+      </div>
+      <button id="toggle-btn" class="action-btn" onclick="toggleAutoReply()">تغيير الحالة</button>
+    </section>
 
-  <p id="hint" class="muted hint">جاري تجهيز اتصال WhatsApp...</p>
-  <button onclick="refresh()">تحديث الحالة</button>
-</section>
-
-<section class="card">
-  <h2>📊 الحالة</h2>
-  <div class="grid">
-    <div class="item"><div class="label">واتساب</div><div class="value" id="wa">—</div></div>
-    <div class="item"><div class="label">الرد التلقائي</div><div class="value" id="reply">—</div></div>
-  </div>
-  <p id="err" class="error"></p>
-</section>
-
-<section class="card">
-  <h2>🤖 أوامر Telegram</h2>
-  <p><code>/awake</code> تشغيل الرد</p>
-  <p><code>/sleep</code> إيقاف الرد</p>
-  <p><code>/message نص</code> تغيير الرسالة</p>
-  <p><code>/status</code> عرض الحالة</p>
-  <p><code>/qr</code> حالة QR</p>
-</section>
-</main>
+    <section class="card">
+      <h3>سجل العمليات المباشر</h3>
+      <div id="log-box" style="margin-top:10px">[System] جاري بدء النظام...<br></div>
+    </section>
+  </main>
 
 <script>
-const $=id=>document.getElementById(id);
+const wsProtocol = location.protocol === "https:" ? "wss" : "ws";
+const ws = new WebSocket(`${wsProtocol}://${location.host}/ws`);
+const logBox = document.getElementById("log-box");
+const statusEl = document.getElementById("bot-status");
 
-function stateArabic(s){
-  return {
-    STARTING:"جاري التشغيل ⏳",
-    QR_READY:"بانتظار مسح QR 📱",
-    AUTHENTICATED:"تمت المصادقة 🔐",
-    CONNECTED:"متصل ✅",
-    DISCONNECTED:"تم قطع الاتصال ⚠️",
-    AUTH_FAILURE:"فشل المصادقة ❌",
-    INIT_ERROR:"خطأ في التشغيل ❌",
-    QR_ERROR:"خطأ في QR ❌"
-  }[s]||s;
+function addLog(message){
+  logBox.innerHTML += `[${new Date().toLocaleTimeString()}] ${message}<br>`;
+  logBox.scrollTop = logBox.scrollHeight;
 }
 
-async function refresh(){
-  try{
-    const s=await fetch("/api/status",{cache:"no-store"}).then(r=>r.json());
-    $("state").textContent=stateArabic(s.whatsapp);
-    $("wa").textContent=stateArabic(s.whatsapp);
-    $("reply").textContent=s.autoReply?"مفعل ✅":"متوقف ⛔";
-    $("dot").className="dot "+(s.whatsapp==="CONNECTED"?"ok":"");
-
-    if(s.hasQr){
-      const q=await fetch("/api/qr",{cache:"no-store"}).then(r=>r.json());
-      $("qr").src=q.qr;
-      $("qrBox").style.display="flex";
-      $("hint").textContent="افتح WhatsApp ← الإعدادات ← الأجهزة المرتبطة ← ربط جهاز، ثم امسح رمز QR.";
-    }else{
-      $("qrBox").style.display="none";
-      $("hint").textContent=s.whatsapp==="CONNECTED"
-        ?"✅ WhatsApp متصل. لا تحتاج لمسح QR مرة أخرى."
-        :"⏳ جاري انتظار QR...";
-    }
-
-    $("err").textContent=s.error?"⚠️ "+s.error:"";
-  }catch(e){
-    $("state").textContent="تعذر الاتصال بالسيرفر ❌";
-    $("wa").textContent="SERVER ERROR";
-    $("err").textContent="⚠️ "+e.message;
+ws.onopen = () => addLog("تم الاتصال بلوحة التحكم.");
+ws.onmessage = event => {
+  const data = JSON.parse(event.data);
+  if(data.type === "status"){
+    statusEl.textContent = data.msg;
+    addLog(data.msg);
   }
+  if(data.type === "log") addLog(data.msg);
+};
+ws.onclose = () => addLog("انقطع اتصال WebSocket.");
+
+async function toggleAutoReply(){
+  const res = await fetch("/api/toggle-auto-reply", {method:"POST"});
+  const data = await res.json();
+  addLog(`الرد الآلي الآن: ${data.auto_reply ? "مفعل" : "معطل"}`);
 }
 
-refresh();
-setInterval(refresh,3000);
+function switchTab(button, tabName){
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+  addLog(`الانتقال إلى شاشة: ${tabName}`);
+}
 </script>
 </body>
 </html>
