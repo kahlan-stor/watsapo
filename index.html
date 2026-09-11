@@ -1,97 +1,105 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة تحكم واتساب الأعمال</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Tahoma,sans-serif}
-    body{display:flex;min-height:100vh;background:#111b21;color:#e9edef}
-    #sidebar{width:280px;background:#202c33;border-left:1px solid #2a3942;padding:20px;display:flex;flex-direction:column}
-    #sidebar h2{text-align:center;color:#00a884;margin-bottom:20px;font-size:1.2rem}
-    .nav-btn{background:#2a3942;color:#e9edef;border:0;padding:12px;margin-bottom:10px;border-radius:8px;cursor:pointer;text-align:right}
-    .nav-btn:hover,.nav-btn.active{background:#00a884;color:#111b21;font-weight:bold}
-    #main-content{flex:1;padding:30px;display:flex;flex-direction:column;gap:20px}
-    .card{background:#202c33;padding:20px;border-radius:10px;border:1px solid #2a3942}
-    .status-badge{display:inline-block;padding:5px 12px;border-radius:15px;background:#00a884;color:#111b21;font-weight:bold}
-    .toggle-container{display:flex;justify-content:space-between;align-items:center;gap:20px}
-    .action-btn{background:#00a884;border:0;padding:10px 20px;color:#111b21;border-radius:5px;font-weight:bold;cursor:pointer}
-    #log-box{background:#0b141a;padding:15px;border-radius:8px;height:220px;overflow-y:auto;font-family:monospace;font-size:.85rem;color:#25d366}
-    .muted{color:#8696a0;font-size:.85rem;margin-top:8px}
-    @media(max-width:700px){
-      body{display:block}
-      #sidebar{width:100%;border-left:0;border-bottom:1px solid #2a3942}
-      #main-content{padding:15px}
-      .toggle-container{flex-direction:column;align-items:stretch}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مشغل الفيديو</title>
+<style>
+:root{--bg:#070b12;--panel:#101722;--panel2:#151e2b;--line:#253044;--text:#f6f8fb;--muted:#93a0b2;--accent:#5b7cfa;--accent2:#7c5cff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172238 0,#070b12 45%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Tahoma,Arial,sans-serif;min-height:100vh}
+button,input,select{font:inherit}.top{position:sticky;top:0;z-index:4;background:rgba(7,11,18,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07)}
+.nav{max-width:1200px;margin:auto;padding:15px 18px;display:flex;align-items:center;gap:15px}.brand{font-weight:900;font-size:21px;white-space:nowrap}.brand span{color:#7890ff}.search{display:flex;flex:1;gap:8px}.search input{width:100%;background:#111925;border:1px solid var(--line);color:#fff;border-radius:14px;padding:13px 16px;outline:0}.search input:focus{border-color:var(--accent)}.btn{border:0;border-radius:13px;padding:12px 17px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;cursor:pointer}.btn.secondary{background:#1a2330;border:1px solid var(--line)}main{max-width:1200px;margin:0 auto;padding:24px 18px 80px}
+.hero{padding:28px 0 12px}.hero h1{font-size:clamp(28px,5vw,48px);margin:0 0 8px}.hero p{color:var(--muted);margin:0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}.chip{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#0e1520;color:#b8c3d3;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.card{background:linear-gradient(180deg,#111a26,#0d141e);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 35px #0005;transition:.2s;cursor:pointer}.card:hover{transform:translateY(-3px);border-color:#405071}.thumb{position:relative;aspect-ratio:16/9;background:#080c12}.thumb img{width:100%;height:100%;object-fit:cover}.duration{position:absolute;bottom:9px;left:9px;background:#000c;border-radius:7px;padding:4px 7px;font-size:12px}.cardbody{padding:14px}.title{font-weight:800;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.meta{color:var(--muted);font-size:13px;margin-top:8px}
+.empty{text-align:center;color:var(--muted);padding:65px 10px}.loader{margin:50px auto;width:42px;height:42px;border:4px solid #263143;border-top-color:#7187ff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.modal{display:none;position:fixed;inset:0;z-index:10;background:#000d;backdrop-filter:blur(12px);padding:15px;overflow:auto}.modal.show{display:block}.box{max-width:1050px;margin:20px auto;background:#0d141e;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 25px 90px #000}.boxhead{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}.boxhead h2{font-size:17px;margin:0;flex:1}.close{background:#1c2633;border:1px solid var(--line);color:#fff;border-radius:10px;padding:9px 12px}.videoarea{background:#000}.videoarea video{width:100%;display:block;max-height:68vh}.tools{padding:15px;display:flex;gap:9px;flex-wrap:wrap;border-bottom:1px solid var(--line)}.tools select{background:#131d29;border:1px solid var(--line);color:#fff;border-radius:11px;padding:11px;min-width:150px}.info{padding:15px}.info h3{margin:0 0 8px}.info p{color:var(--muted);line-height:1.7;white-space:pre-wrap;max-height:130px;overflow:auto}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:5;background:#0b1119eF;border-top:1px solid var(--line);backdrop-filter:blur(15px);display:flex;justify-content:center;gap:8px;padding:8px}.bottom button{background:transparent;color:#aeb8c7;border:0;padding:9px 15px;border-radius:10px;cursor:pointer}.bottom button.active{background:#18233a;color:#fff}
+.toast{position:fixed;right:15px;bottom:70px;z-index:30;background:#182231;border:1px solid var(--line);padding:12px 15px;border-radius:12px;display:none}
+@media(max-width:650px){.nav{flex-wrap:wrap}.brand{width:100%}.search{width:100%}.hero{padding-top:15px}.grid{grid-template-columns:1fr}.tools .btn,.tools select{flex:1}.box{margin:0 auto;border-radius:16px}}
+</style>
 </head>
 <body>
-  <aside id="sidebar">
-    <h2>واتساب الأعمال الذكي</h2>
-    <button class="nav-btn active" onclick="switchTab(this,'overview')">📌 النظرة العامة</button>
-    <button class="nav-btn" onclick="switchTab(this,'chats')">💬 الدردشات</button>
-    <button class="nav-btn" onclick="switchTab(this,'calls')">📞 سجل المكالمات</button>
-    <button class="nav-btn" onclick="switchTab(this,'statuses')">👁️ الحالات</button>
-    <button class="nav-btn" onclick="switchTab(this,'settings')">⚙️ إعدادات الذكاء الاصطناعي</button>
-  </aside>
+<header class="top"><div class="nav">
+<div class="brand">Video<span>Hub</span></div>
+<div class="search"><input id="q" autocomplete="off" placeholder="ابحث عن فيديو..."><button class="btn" onclick="doSearch()">بحث</button></div>
+</div></header>
 
-  <main id="main-content">
-    <section class="card">
-      <h3>حالة الاتصال</h3>
-      <p style="margin-top:10px">الحالة الحالية:
-        <span id="bot-status" class="status-badge">جاري التحميل...</span>
-      </p>
-      <p class="muted">يتم تشغيل WhatsApp Web داخل جلسة محفوظة محلياً. امسح رمز QR عند ظهوره في بيئة تشغيل تدعم عرض المتصفح.</p>
-    </section>
+<main>
+<section class="hero"><h1>شاهد وابحث بسهولة</h1><p>ابحث، شغّل، اختر الجودة، واحفظ مفضلاتك من واجهة واحدة.</p>
+<div class="chips">
+<button class="chip" onclick="quick('music')">🎵 موسيقى</button><button class="chip" onclick="quick('news')">📰 أخبار</button><button class="chip" onclick="quick('football')">⚽ كرة القدم</button><button class="chip" onclick="quick('technology')">💻 تقنية</button>
+</div></section>
+<div id="results" class="grid"></div><div id="empty" class="empty">اكتب كلمة في البحث للبدء</div>
+</main>
 
-    <section class="card toggle-container">
-      <div>
-        <h3>الرد الآلي الذكي (Gemini AI)</h3>
-        <p class="muted">تحكم في تشغيل/إيقاف الرد الآلي من لوحة التحكم.</p>
-      </div>
-      <button id="toggle-btn" class="action-btn" onclick="toggleAutoReply()">تغيير الحالة</button>
-    </section>
+<div id="modal" class="modal" onclick="outside(event)">
+<div class="box">
+<div class="boxhead"><h2 id="mtitle">الفيديو</h2><button class="close" onclick="closeModal()">✕</button></div>
+<div class="videoarea"><video id="player" controls playsinline></video></div>
+<div class="tools">
+<select id="quality" onchange="setQuality()"></select>
+<button class="btn secondary" onclick="downloadCurrent('video')">⬇️ تحميل الفيديو</button>
+<button class="btn secondary" onclick="downloadCurrent('audio')">🎵 تحميل الصوت</button>
+<button class="btn secondary" onclick="toggleFavorite()">♡ المفضلة</button>
+</div>
+<div class="info"><h3>تفاصيل الفيديو</h3><div id="mchannel" class="meta"></div><p id="mdesc"></p></div>
+</div></div>
 
-    <section class="card">
-      <h3>سجل العمليات المباشر</h3>
-      <div id="log-box" style="margin-top:10px">[System] جاري بدء النظام...<br></div>
-    </section>
-  </main>
+<div id="toast" class="toast"></div>
+<nav class="bottom"><button id="homeBtn" class="active" onclick="showHome()">⌂ الرئيسية</button><button onclick="showFavorites()">♡ المفضلة</button><button onclick="showHistory()">◷ السجل</button></nav>
 
 <script>
-const wsProtocol = location.protocol === "https:" ? "wss" : "ws";
-const ws = new WebSocket(`${wsProtocol}://${location.host}/ws`);
-const logBox = document.getElementById("log-box");
-const statusEl = document.getElementById("bot-status");
-
-function addLog(message){
-  logBox.innerHTML += `[${new Date().toLocaleTimeString()}] ${message}<br>`;
-  logBox.scrollTop = logBox.scrollHeight;
+const $=id=>document.getElementById(id);
+let current=null, formats=[], currentUrl="";
+const favKey="vh_favorites", histKey="vh_history";
+const get=(k)=>JSON.parse(localStorage.getItem(k)||"[]");
+const put=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+function toast(t){$("toast").textContent=t;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2600)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function duration(sec){if(!sec)return "";sec=Math.floor(sec);let h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return h?`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${m}:${String(s).padStart(2,"0")}`}
+function render(items){
+ $("results").innerHTML=items.map(v=>`<article class="card" onclick="openVideo('${esc(v.id)}')"><div class="thumb"><img src="${esc(v.thumbnail)}" loading="lazy"><span class="duration">${duration(v.duration)}</span></div><div class="cardbody"><div class="title">${esc(v.title)}</div><div class="meta">${esc(v.channel||"")}</div></div></article>`).join("");
+ $("empty").style.display=items.length?"none":"block";
 }
-
-ws.onopen = () => addLog("تم الاتصال بلوحة التحكم.");
-ws.onmessage = event => {
-  const data = JSON.parse(event.data);
-  if(data.type === "status"){
-    statusEl.textContent = data.msg;
-    addLog(data.msg);
-  }
-  if(data.type === "log") addLog(data.msg);
-};
-ws.onclose = () => addLog("انقطع اتصال WebSocket.");
-
-async function toggleAutoReply(){
-  const res = await fetch("/api/toggle-auto-reply", {method:"POST"});
-  const data = await res.json();
-  addLog(`الرد الآلي الآن: ${data.auto_reply ? "مفعل" : "معطل"}`);
+async function doSearch(){
+ let q=$("q").value.trim();if(!q)return;
+ $("results").innerHTML="";$("empty").innerHTML='<div class="loader"></div>';
+ try{let r=await fetch("/api/search?q="+encodeURIComponent(q));let d=await r.json();if(d.error)throw Error(d.error);render(d.items||[]);saveSearch(q)}catch(e){$("empty").textContent="تعذر البحث: "+e.message}
 }
-
-function switchTab(button, tabName){
-  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
-  button.classList.add("active");
-  addLog(`الانتقال إلى شاشة: ${tabName}`);
+function quick(q){$("q").value=q;doSearch()}
+function saveSearch(q){let a=get("vh_searches").filter(x=>x!==q);a.unshift(q);put("vh_searches",a.slice(0,15))}
+async function openVideo(id){
+ $("modal").classList.add("show");$("player").src="";$("mtitle").textContent="جاري تجهيز الفيديو...";$("quality").innerHTML="";
+ try{
+  let r=await fetch("/api/video/"+encodeURIComponent(id));let d=await r.json();if(d.error)throw Error(d.error);
+  current=d;formats=d.formats||[];$("mtitle").textContent=d.title||"الفيديو";$("mchannel").textContent=d.channel||"";$("mdesc").textContent=d.description||"";
+  let playable=formats.filter(f=>f.has_audio&&f.has_video);
+  if(!playable.length)playable=formats;
+  playable.sort((a,b)=>(a.height||0)-(b.height||0));
+  $("quality").innerHTML=playable.map((f,i)=>`<option value="${i}">${f.height||"?"}p • ${f.ext||""}${f.has_audio?"":" • بدون صوت"}</option>`).join("");
+  if(playable.length){$("quality").dataset.mode="playable";currentUrl=playable[playable.length-1].url;$("quality").value=playable.length-1;$("player").src=currentUrl}
+  let h=get(histKey).filter(x=>x.id!==id);h.unshift({id,title:d.title,thumbnail:d.thumbnail,channel:d.channel,duration:d.duration});put(histKey,h.slice(0,30));
+ }catch(e){$("mtitle").textContent="تعذر تشغيل الفيديو";toast(e.message)}
 }
+function setQuality(){let i=+$("quality").value;let f=formats.filter(x=>x.has_audio&&x.has_video).sort((a,b)=>(a.height||0)-(b.height||0))[i];if(!f){let arr=formats.slice().sort((a,b)=>(a.height||0)-(b.height||0));f=arr[i]}if(f?.url){currentUrl=f.url;$("player").src=f.url;$("player").play().catch(()=>{})}}
+async function downloadCurrent(type){
+ if(!current?.id)return;
+ toast("جاري استخراج رابط التحميل...");
+ try{let q=type==="video"&&$("quality").selectedOptions[0]?.textContent.match(/(\d+)p/)?.[1]||"";
+ let r=await fetch(`/api/download/${encodeURIComponent(current.id)}?type=${type}&quality=${q}`);let d=await r.json();if(d.error||!d.url)throw Error(d.error||"لم يتم الحصول على الرابط");
+ window.open(d.url,"_blank");toast("تم فتح رابط التحميل");}catch(e){toast("تعذر التحميل: "+e.message)}
+}
+function toggleFavorite(){
+ if(!current)return;let a=get(favKey),i=a.findIndex(x=>x.id===current.id);
+ if(i>=0){a.splice(i,1);toast("أزيل من المفضلة")}else{a.unshift({id:current.id,title:current.title,thumbnail:current.thumbnail,channel:current.channel,duration:current.duration});toast("أضيف إلى المفضلة")}
+ put(favKey,a.slice(0,100))
+}
+function showHome(){location.hash="home";$("homeBtn").classList.add("active");$("results").innerHTML="";$("empty").style.display="block";$("empty").textContent="اكتب كلمة في البحث للبدء"}
+function showFavorites(){location.hash="favorites";$("homeBtn").classList.remove("active");let a=get(favKey);render(a);if(!a.length)$("empty").textContent="لا توجد فيديوهات في المفضلة"}
+function showHistory(){location.hash="history";$("homeBtn").classList.remove("active");let a=get(histKey);render(a);if(!a.length)$("empty").textContent="سجل المشاهدة فارغ"}
+function closeModal(){$("player").pause();$("player").src="";$("modal").classList.remove("show")}
+function outside(e){if(e.target.id==="modal")closeModal()}
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch()});
 </script>
 </body>
 </html>
