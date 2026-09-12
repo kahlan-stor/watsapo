@@ -551,10 +551,13 @@ def api_send():
 
 if __name__ == "__main__":
     init_db()
-    start_whatsapp()
-    print("\n" + "="*58)
+    try:\n        start_whatsapp()\n    except Exception as e:\n        wa["last_error"] = "تعذر تشغيل محرك WhatsApp: " + str(e)\n    print("\n" + "="*58)
     print(APP_NAME)
     print("افتح: http://127.0.0.1:5000")
     print("المتطلبات: pip install flask qrcode pillow waeys")
     print("="*58 + "\n")
-    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "5000")), debug=False, threaded=True)
+
+
+# Railway/Gunicorn entry point:
+# gunicorn main:app
